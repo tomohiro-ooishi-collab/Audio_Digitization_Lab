@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7fb">
+  <title>音声のデジタル化シミュレータ</title>
+  <link rel="stylesheet" href="./css/menu.css">
+</head>
+<body>
+  <main class="menu-page">
+    <header class="menu-header">
+      <p class="eyebrow">Audio digitization simulators</p>
+      <h1>音声のデジタル化シミュレータ</h1>
+      <p class="lead">
+        音声をデジタル化する仕組みを、波形を操作しながら確かめるためのシミュレータ集です。
+      </p>
+    </header>
+
+    <section class="simulator-list" aria-label="シミュレータ一覧">
+      <a class="simulator-card" href="./reconstruction/">
+        <div class="card-number">01</div>
+        <div class="card-body">
+          <h2>復元シミュレータ</h2>
+          <p>
+            元信号と標本化周波数を変え、標本点と sinc 補間による復元波形を比較します。
+            原音と復元音を聞き比べることもできます。
+          </p>
+          <span class="card-link">開く →</span>
+        </div>
+      </a>
+    </section>
+
+    <p class="future-note">
+      今後、標本化・量子化などのシミュレータをこのメニューに追加できます。
+    </p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>標本化・量子化シミュレータ</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="app__header">
+      <h1>標本化・量子化シミュレータ</h1>
+      <p>
+        正弦波を標本化し、標本値が量子化レベルに丸められる様子を確認できます。
+      </p>
+    </header>
+
+    <section class="controls" aria-label="シミュレータ設定">
+      <div class="control">
+        <label for="signalFrequency">原音周波数</label>
+        <div class="control__row">
+          <input id="signalFrequency" type="range" min="100" max="1000" step="50" value="400">
+          <output id="signalFrequencyValue" for="signalFrequency">400 Hz</output>
+        </div>
+      </div>
+
+      <div class="control">
+        <label for="samplingFrequency">標本化周波数</label>
+        <div class="control__row">
+          <input id="samplingFrequency" type="range" min="200" max="8000" step="100" value="2000">
+          <output id="samplingFrequencyValue" for="samplingFrequency">2000 Hz</output>
+        </div>
+      </div>
+
+      <div class="control">
+        <label for="quantizationBits">量子化ビット数</label>
+        <div class="control__row">
+          <input id="quantizationBits" type="range" min="1" max="5" step="1" value="3">
+          <output id="quantizationBitsValue" for="quantizationBits">3 bit（8段階）</output>
+        </div>
+      </div>
+    </section>
+
+    <section class="chart-card">
+      <div class="legend" aria-label="凡例">
+        <span><i class="legend__line"></i>原音</span>
+        <span><i class="legend__sample"></i>標本点</span>
+        <span><i class="legend__quantized"></i>量子化後</span>
+        <span><i class="legend__level"></i>量子化レベル</span>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="waveCanvas" aria-label="正弦波、標本点、量子化点のグラフ"></canvas>
+      </div>
+
+      <div class="summary" aria-live="polite">
+        <span id="samplesPerCycle"></span>
+        <span id="quantizationLevels"></span>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

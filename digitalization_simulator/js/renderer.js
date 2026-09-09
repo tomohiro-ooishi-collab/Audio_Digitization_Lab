@@ -1,6 +1,7 @@
 /**
  * Canvas描画モジュール。
- * 原音・標本点・量子化点・量子化レベルを同じ座標系に描く。
+ * 原音・標本点・量子化点・量子化レベル・階段状の量子化値表示を
+ * 同じ座標系に描く。
  */
 
 const COLORS = {
@@ -10,6 +11,7 @@ const COLORS = {
   signal: "#2563eb",
   sample: "#111827",
   quantized: "#dc2626",
+  quantizedStep: "#dc2626",
   quantizationLevel: "#9ca3af",
   errorLine: "#f59e0b",
   label: "#4b5563",
@@ -47,6 +49,7 @@ export function createRenderer(canvas) {
     quantizedPoints,
     quantizationLevels,
     duration,
+    showQuantizedSteps = true,
   }) {
     const { width, height } = resizeCanvas();
     context.clearRect(0, 0, width, height);
@@ -76,6 +79,19 @@ export function createRenderer(canvas) {
     drawAxes(context, plot, x, y, duration);
     drawQuantizationLevels(context, plot, y, quantizationLevels);
     drawSignal(context, originalSignal, x, y);
+
+    // 量子化値を次の標本化時刻まで保持したものとして
+    // 階段状に表示する。
+    if (showQuantizedSteps) {
+      drawQuantizedSteps(
+        context,
+        quantizedPoints,
+        x,
+        y,
+        duration
+      );
+    }
+
     drawSamples(context, sampledPoints, x, y);
     drawQuantizedPoints(context, quantizedPoints, x, y);
   }
@@ -85,30 +101,42 @@ export function createRenderer(canvas) {
 
 function drawBackground(ctx, plot) {
   ctx.save();
+
   ctx.fillStyle = COLORS.background;
+
   ctx.fillRect(
     plot.left,
     plot.top,
     plot.right - plot.left,
     plot.bottom - plot.top
   );
+
   ctx.restore();
 }
 
 function drawAxes(ctx, plot, x, y, duration) {
   ctx.save();
+
   ctx.lineWidth = 1;
   ctx.strokeStyle = COLORS.grid;
   ctx.fillStyle = COLORS.label;
   ctx.font = "12px system-ui, sans-serif";
 
-  // 横方向：1 msごとの目盛り
+  // 横方向の目盛り
   const durationMs = duration * 1000;
-  const tickStepMs =
-    durationMs <= 10 ? 1 :
-    durationMs <= 20 ? 2 : 5;
 
-  for (let ms = 0; ms <= durationMs + 1e-9; ms += tickStepMs) {
+  const tickStepMs =
+    durationMs <= 10
+      ? 1
+      : durationMs <= 20
+        ? 2
+        : 5;
+
+  for (
+    let ms = 0;
+    ms <= durationMs + 1e-9;
+    ms += tickStepMs
+  ) {
     const px = x(ms / 1000);
 
     ctx.beginPath();
@@ -118,10 +146,15 @@ function drawAxes(ctx, plot, x, y, duration) {
 
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    ctx.fillText(`${ms}`, px, plot.bottom + 8);
+
+    ctx.fillText(
+      `${ms}`,
+      px,
+      plot.bottom + 8
+    );
   }
 
-  // 振幅の主要目盛り
+  // 振幅方向の主要目盛り
   [-1, -0.5, 0, 0.5, 1].forEach((value) => {
     const py = y(value);
 
@@ -132,11 +165,17 @@ function drawAxes(ctx, plot, x, y, duration) {
 
     ctx.textAlign = "right";
     ctx.textBaseline = "middle";
-    ctx.fillText(value.toFixed(value === 0 ? 0 : 1), plot.left - 8, py);
+
+    ctx.fillText(
+      value.toFixed(value === 0 ? 0 : 1),
+      plot.left - 8,
+      py
+    );
   });
 
-  // 0軸だけ少し強調
+  // 0軸を少し強調
   ctx.strokeStyle = COLORS.axis;
+
   ctx.beginPath();
   ctx.moveTo(plot.left, y(0));
   ctx.lineTo(plot.right, y(0));
@@ -144,23 +183,40 @@ function drawAxes(ctx, plot, x, y, duration) {
 
   ctx.textAlign = "right";
   ctx.textBaseline = "bottom";
-  ctx.fillText("振幅", plot.left - 8, plot.top + 8);
+
+  ctx.fillText(
+    "振幅",
+    plot.left - 8,
+    plot.top + 8
+  );
 
   ctx.textAlign = "right";
   ctx.textBaseline = "top";
-  ctx.fillText("時間 [ms]", plot.right, plot.bottom + 24);
+
+  ctx.fillText(
+    "時間 [ms]",
+    plot.right,
+    plot.bottom + 24
+  );
 
   ctx.restore();
 }
 
-function drawQuantizationLevels(ctx, plot, y, levels) {
+function drawQuantizationLevels(
+  ctx,
+  plot,
+  y,
+  levels
+) {
   ctx.save();
+
   ctx.strokeStyle = COLORS.quantizationLevel;
   ctx.lineWidth = 1;
   ctx.setLineDash([5, 5]);
 
   levels.forEach((level) => {
     const py = y(level);
+
     ctx.beginPath();
     ctx.moveTo(plot.left, py);
     ctx.lineTo(plot.right, py);
@@ -171,18 +227,103 @@ function drawQuantizationLevels(ctx, plot, y, levels) {
 }
 
 function drawSignal(ctx, points, x, y) {
-  if (points.length === 0) return;
+  if (points.length === 0) {
+    return;
+  }
 
   ctx.save();
+
   ctx.strokeStyle = COLORS.signal;
   ctx.lineWidth = 2.2;
   ctx.setLineDash([]);
 
   ctx.beginPath();
-  ctx.moveTo(x(points[0].time), y(points[0].value));
 
-  for (let i = 1; i < points.length; i += 1) {
-    ctx.lineTo(x(points[i].time), y(points[i].value));
+  ctx.moveTo(
+    x(points[0].time),
+    y(points[0].value)
+  );
+
+  for (
+    let i = 1;
+    i < points.length;
+    i += 1
+  ) {
+    ctx.lineTo(
+      x(points[i].time),
+      y(points[i].value)
+    );
+  }
+
+  ctx.stroke();
+  ctx.restore();
+}
+
+/**
+ * 量子化後の値を、次の標本化時刻まで同じ値として保持して
+ * 階段状に描画する。
+ *
+ * これはデジタル音声そのものの波形ではなく、
+ * 量子化された標本値をゼロ次ホールド的に可視化したもの。
+ */
+function drawQuantizedSteps(
+  ctx,
+  points,
+  x,
+  y,
+  duration
+) {
+  if (points.length === 0) {
+    return;
+  }
+
+  ctx.save();
+
+  ctx.strokeStyle = COLORS.quantizedStep;
+  ctx.lineWidth = 2.2;
+  ctx.globalAlpha = 0.8;
+  ctx.setLineDash([]);
+
+  ctx.beginPath();
+
+  const first = points[0];
+
+  ctx.moveTo(
+    x(first.time),
+    y(first.quantizedValue)
+  );
+
+  for (
+    let i = 0;
+    i < points.length - 1;
+    i += 1
+  ) {
+    const current = points[i];
+    const next = points[i + 1];
+
+    // 現在の量子化値を
+    // 次の標本化時刻まで水平に保持
+    ctx.lineTo(
+      x(next.time),
+      y(current.quantizedValue)
+    );
+
+    // 次の標本化時刻で
+    // 次の量子化値へ垂直に移動
+    ctx.lineTo(
+      x(next.time),
+      y(next.quantizedValue)
+    );
+  }
+
+  // 最後の標本値は表示範囲の右端まで保持
+  const last = points[points.length - 1];
+
+  if (last.time < duration) {
+    ctx.lineTo(
+      x(duration),
+      y(last.quantizedValue)
+    );
   }
 
   ctx.stroke();
@@ -191,13 +332,22 @@ function drawSignal(ctx, points, x, y) {
 
 function drawSamples(ctx, points, x, y) {
   ctx.save();
+
   ctx.strokeStyle = COLORS.sample;
   ctx.fillStyle = COLORS.background;
   ctx.lineWidth = 1.8;
 
   points.forEach((point) => {
     ctx.beginPath();
-    ctx.arc(x(point.time), y(point.value), 4, 0, Math.PI * 2);
+
+    ctx.arc(
+      x(point.time),
+      y(point.value),
+      4,
+      0,
+      Math.PI * 2
+    );
+
     ctx.fill();
     ctx.stroke();
   });
@@ -205,18 +355,33 @@ function drawSamples(ctx, points, x, y) {
   ctx.restore();
 }
 
-function drawQuantizedPoints(ctx, points, x, y) {
+function drawQuantizedPoints(
+  ctx,
+  points,
+  x,
+  y
+) {
   ctx.save();
 
-  // 標本値から量子化値までの移動を細い線で示す。
+  // 標本値から量子化値までの移動を
+  // 細い線で示す。
   ctx.strokeStyle = COLORS.errorLine;
   ctx.lineWidth = 1;
   ctx.globalAlpha = 0.75;
 
   points.forEach((point) => {
     ctx.beginPath();
-    ctx.moveTo(x(point.time), y(point.value));
-    ctx.lineTo(x(point.time), y(point.quantizedValue));
+
+    ctx.moveTo(
+      x(point.time),
+      y(point.value)
+    );
+
+    ctx.lineTo(
+      x(point.time),
+      y(point.quantizedValue)
+    );
+
     ctx.stroke();
   });
 
@@ -228,7 +393,12 @@ function drawQuantizedPoints(ctx, points, x, y) {
     const py = y(point.quantizedValue);
     const size = 7;
 
-    ctx.fillRect(px - size / 2, py - size / 2, size, size);
+    ctx.fillRect(
+      px - size / 2,
+      py - size / 2,
+      size,
+      size
+    );
   });
 
   ctx.restore();

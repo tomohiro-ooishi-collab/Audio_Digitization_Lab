@@ -107,7 +107,7 @@ export function buildUI(root, initialState) {
           class="reset-button"
           type="button"
         >
-          初期値に戻す
+          初期値
         </button>
 
         <p

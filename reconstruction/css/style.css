@@ -554,8 +554,8 @@ canvas {
 /* 全体の2カラム構成 */
 .simulator-layout {
   display: grid;
-  grid-template-columns: 270px minmax(0, 1fr);
-  gap: 24px;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 18px;
   align-items: start;
 }
 

@@ -475,6 +475,8 @@ input[type="range"] {
 
   white-space:
     nowrap;
+
+  display: none;
 }
 
 
@@ -1174,10 +1176,10 @@ canvas {
       100%;
 
     padding:
-      9px 14px;
+      5px 9px;
 
-    font-size:
-      inherit;
+    font-size: 0.75rem;
+    white-space: nowrap;
   }
 
 

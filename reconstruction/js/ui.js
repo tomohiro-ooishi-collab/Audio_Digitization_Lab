@@ -21,200 +21,209 @@ export function buildUI(root, initialState) {
       </p>
     </header>
 
-    <div class="simulator-layout">
 
-      <!-- 左側：操作パネル -->
-      <aside class="control-panel" aria-label="シミュレータ設定">
+    <!-- 上部：操作パネル -->
+    <section
+      class="control-panel"
+      aria-label="シミュレータ設定"
+    >
 
-        <h2 class="control-panel-title">操作</h2>
+      <div class="control-grid">
 
-        <div class="control-grid">
+        <div class="control-block">
 
-          <div class="control-block">
-            <div class="control-label-row">
-              <label for="signal-frequency">
-                元信号周波数
-              </label>
+          <div class="control-label-row">
 
-              <output
-                id="signal-frequency-value"
-                for="signal-frequency"
-              ></output>
-            </div>
+            <label for="signal-frequency">
+              元信号周波数
+            </label>
 
-            <input
-              id="signal-frequency"
-              type="range"
-              min="100"
-              max="1000"
-              step="10"
-            >
+            <output
+              id="signal-frequency-value"
+              for="signal-frequency"
+            ></output>
 
-            <div
-              class="range-hints"
-              aria-hidden="true"
-            >
-              <span>100 Hz</span>
-              <span>1000 Hz</span>
-            </div>
           </div>
 
+          <input
+            id="signal-frequency"
+            type="range"
+            min="100"
+            max="1000"
+            step="10"
+          >
 
-          <div class="control-block">
-            <div class="control-label-row">
-              <label for="sampling-frequency">
-                標本化周波数
-              </label>
-
-              <output
-                id="sampling-frequency-value"
-                for="sampling-frequency"
-              ></output>
-            </div>
-
-            <input
-              id="sampling-frequency"
-              type="range"
-              min="100"
-              max="4000"
-              step="10"
-            >
-
-            <div
-              class="range-hints"
-              aria-hidden="true"
-            >
-              <span>100 Hz</span>
-              <span>4000 Hz</span>
-            </div>
+          <div
+            class="range-hints"
+            aria-hidden="true"
+          >
+            <span>100 Hz</span>
+            <span>1000 Hz</span>
           </div>
 
         </div>
 
 
-        <div class="panel-footer">
+        <div class="control-block">
 
-          <button
-            id="reset-button"
-            class="reset-button"
-            type="button"
+          <div class="control-label-row">
+
+            <label for="sampling-frequency">
+              標本化周波数
+            </label>
+
+            <output
+              id="sampling-frequency-value"
+              for="sampling-frequency"
+            ></output>
+
+          </div>
+
+          <input
+            id="sampling-frequency"
+            type="range"
+            min="100"
+            max="4000"
+            step="10"
           >
-            初期値に戻す
-          </button>
+
+          <div
+            class="range-hints"
+            aria-hidden="true"
+          >
+            <span>100 Hz</span>
+            <span>4000 Hz</span>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="panel-footer">
+
+        <button
+          id="reset-button"
+          class="reset-button"
+          type="button"
+        >
+          初期値に戻す
+        </button>
+
+        <p
+          id="status"
+          class="status"
+          role="status"
+        ></p>
+
+      </div>
+
+    </section>
+
+
+    <!-- 下部：観察結果 -->
+    <div class="simulation-results">
+
+      <section class="graph-card">
+
+        <div class="graph-heading">
+
+          <div>
+            <p class="graph-number">01</p>
+            <h2>元信号と標本点</h2>
+          </div>
+
+          <p>
+            連続した元信号から、
+            どの点が取り出されているかを観察します。
+          </p>
+
+        </div>
+
+
+        <div class="canvas-wrap">
+
+          <canvas
+            id="sampling-canvas"
+            width="900"
+            height="280"
+            aria-label="元信号と標本点のグラフ"
+          ></canvas>
+
+        </div>
+
+      </section>
+
+
+      <section class="graph-card">
+
+        <div class="graph-heading">
+
+          <div>
+            <p class="graph-number">02</p>
+            <h2>元信号と復元信号</h2>
+          </div>
+
+          <p>
+            標本値から理想的な sinc 補間で
+            復元した波形を比較します。
+          </p>
+
+        </div>
+
+
+        <div class="canvas-wrap">
+
+          <canvas
+            id="reconstruction-canvas"
+            width="900"
+            height="280"
+            aria-label="元信号と復元信号のグラフ"
+          ></canvas>
+
+        </div>
+
+
+        <div
+          class="audio-actions"
+          aria-label="音声比較"
+        >
+
+          <div class="audio-buttons">
+
+            <button
+              id="play-source-button"
+              class="audio-button source-audio-button"
+              type="button"
+            >
+              原音を聞く
+            </button>
+
+            <button
+              id="play-reconstructed-button"
+              class="audio-button reconstructed-audio-button"
+              type="button"
+            >
+              復元音を聞く
+            </button>
+
+          </div>
 
           <p
-            id="status"
-            class="status"
-            role="status"
+            id="audio-note"
+            class="audio-note"
           ></p>
 
         </div>
 
-      </aside>
-
-
-      <!-- 右側：観察結果 -->
-      <div class="simulation-results">
-
-        <section class="graph-card">
-
-          <div class="graph-heading">
-
-            <div>
-              <p class="graph-number">01</p>
-              <h2>元信号と標本点</h2>
-            </div>
-
-            <p>
-              連続した元信号から、
-              どの点が取り出されているかを観察します。
-            </p>
-
-          </div>
-
-          <div class="canvas-wrap">
-
-            <canvas
-              id="sampling-canvas"
-              width="900"
-              height="280"
-              aria-label="元信号と標本点のグラフ"
-            ></canvas>
-
-          </div>
-
-        </section>
-
-
-        <section class="graph-card">
-
-          <div class="graph-heading">
-
-            <div>
-              <p class="graph-number">02</p>
-              <h2>元信号と復元信号</h2>
-            </div>
-
-            <p>
-              標本値から理想的な sinc 補間で
-              復元した波形を比較します。
-            </p>
-
-          </div>
-
-          <div class="canvas-wrap">
-
-            <canvas
-              id="reconstruction-canvas"
-              width="900"
-              height="280"
-              aria-label="元信号と復元信号のグラフ"
-            ></canvas>
-
-          </div>
-
-
-          <div
-            class="audio-actions"
-            aria-label="音声比較"
-          >
-
-            <div class="audio-buttons">
-
-              <button
-                id="play-source-button"
-                class="audio-button source-audio-button"
-                type="button"
-              >
-                原音を聞く
-              </button>
-
-              <button
-                id="play-reconstructed-button"
-                class="audio-button reconstructed-audio-button"
-                type="button"
-              >
-                復元音を聞く
-              </button>
-
-            </div>
-
-            <p
-              id="audio-note"
-              class="audio-note"
-            ></p>
-
-          </div>
-
-        </section>
-
-      </div>
+      </section>
 
     </div>
   `;
 
 
   const elements = {
+
     signalFrequency:
       root.querySelector("#signal-frequency"),
 
@@ -247,6 +256,7 @@ export function buildUI(root, initialState) {
 
     status:
       root.querySelector("#status"),
+
   };
 
 
@@ -274,9 +284,11 @@ export function bindUI(
   elements.signalFrequency.addEventListener(
     "input",
     (event) => {
+
       onSignalFrequencyChange(
         Number(event.target.value)
       );
+
     }
   );
 
@@ -284,9 +296,11 @@ export function bindUI(
   elements.samplingFrequency.addEventListener(
     "input",
     (event) => {
+
       onSamplingFrequencyChange(
         Number(event.target.value)
       );
+
     }
   );
 
@@ -294,7 +308,9 @@ export function bindUI(
   elements.playSourceButton.addEventListener(
     "click",
     () => {
+
       onPlaySource();
+
     }
   );
 
@@ -302,7 +318,9 @@ export function bindUI(
   elements.playReconstructedButton.addEventListener(
     "click",
     () => {
+
       onPlayReconstructed();
+
     }
   );
 
@@ -310,7 +328,9 @@ export function bindUI(
   elements.resetButton.addEventListener(
     "click",
     () => {
+
       onReset();
+
     }
   );
 

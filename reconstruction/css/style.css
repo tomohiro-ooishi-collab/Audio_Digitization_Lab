@@ -539,3 +539,188 @@ canvas {
     grid-template-columns: 1fr;
   }
 }
+
+/* =====================================================
+   Desktop layout
+   左：操作パネル
+   右：シミュレーション結果
+===================================================== */
+
+#app {
+  width: min(1280px, calc(100% - 32px));
+}
+
+
+/* 全体の2カラム構成 */
+.simulator-layout {
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+
+/* =====================================================
+   左側：操作パネル
+===================================================== */
+
+.simulator-layout .control-panel {
+  position: sticky;
+  top: 16px;
+
+  margin-bottom: 0;
+  padding: 20px;
+}
+
+
+/* 「操作」見出し */
+.control-panel-title {
+  margin: 0 0 22px;
+  padding-bottom: 12px;
+
+  border-bottom: 1px solid var(--line);
+
+  font-size: 1.05rem;
+}
+
+
+/* 左サイドバー内では
+   コントロールを縦に並べる */
+.simulator-layout .control-grid {
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+
+/* ラベルと現在値 */
+.simulator-layout .control-label-row {
+  gap: 10px;
+}
+
+
+/* サイドバー内の下部 */
+.simulator-layout .panel-footer {
+  flex-direction: column;
+  align-items: stretch;
+
+  gap: 12px;
+
+  margin-top: 24px;
+}
+
+
+/* 初期値ボタン */
+.simulator-layout .reset-button {
+  width: 100%;
+}
+
+
+/* 現在の設定値 */
+.simulator-layout .status {
+  text-align: left;
+  line-height: 1.5;
+}
+
+
+/* =====================================================
+   右側：グラフ
+===================================================== */
+
+.simulation-results {
+  min-width: 0;
+}
+
+
+/* 従来の .graph-card の margin-top を
+   最初のカードだけ打ち消す */
+.simulation-results > .graph-card:first-child {
+  margin-top: 0;
+}
+
+
+/* 2枚目は従来通り間隔を取る */
+.simulation-results > .graph-card + .graph-card {
+  margin-top: 24px;
+}
+
+
+/* =====================================================
+   画面が狭い場合
+===================================================== */
+
+@media (max-width: 900px) {
+
+  #app {
+    width: min(100% - 20px, 1080px);
+  }
+
+
+  .simulator-layout {
+    display: block;
+  }
+
+
+  /* sticky を解除して
+     従来の縦並びに戻す */
+  .simulator-layout .control-panel {
+    position: static;
+
+    margin-bottom: 24px;
+  }
+
+
+  /* タブレット程度なら
+     操作項目は2列に戻す */
+  .simulator-layout .control-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 24px;
+  }
+
+
+  .simulator-layout .panel-footer {
+    flex-direction: row;
+    align-items: center;
+  }
+
+
+  .simulator-layout .reset-button {
+    width: auto;
+  }
+
+
+  .simulator-layout .status {
+    text-align: right;
+  }
+
+}
+
+
+/* =====================================================
+   スマートフォン
+===================================================== */
+
+@media (max-width: 760px) {
+
+  .simulator-layout .control-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .simulator-layout .panel-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+
+  .simulator-layout .reset-button {
+    width: 100%;
+  }
+
+
+  .simulator-layout .status {
+    text-align: left;
+  }
+
+}

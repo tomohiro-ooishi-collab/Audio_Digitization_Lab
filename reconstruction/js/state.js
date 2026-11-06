@@ -4,7 +4,7 @@
 
 const defaults = Object.freeze({
   signalFrequency: 440,
-  samplingFrequency: 1200,
+  samplingFrequency: 3000,
   amplitude: 1,
   phase: 0,
 
